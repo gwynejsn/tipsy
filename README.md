@@ -1,59 +1,108 @@
-# Tipsy
+<h1 align="center"><strong>Tipsy</strong></h1>
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.8.
+<p align="center">
+  A mock frontend-only Angular application built with 
+  <a href="https://github.com/angular/angular-cli">Angular CLI</a> version <strong>19.2.8</strong>.<br>
+  This project uses <strong>mock data only</strong> — there is <strong>no backend</strong>.
+</p>
 
-## Development server
+<hr>
 
-To start a local development server, run:
+<h2>📌 Live Demo</h2>
+<p>
+  🔗 <a href="https://gwynejsn.github.io/tipsy/">https://gwynejsn.github.io/tipsy/</a>
+</p>
 
-```bash
-ng serve
-```
+<h2>🔐 Demo Credentials</h2>
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+<table>
+  <tr>
+    <th>Role</th>
+    <th>Email</th>
+    <th>Password</th>
+  </tr>
+  <tr>
+    <td>Admin</td>
+    <td><code>admin@tipsy.com</code></td>
+    <td><code>password</code></td>
+  </tr>
+  <tr>
+    <td>User</td>
+    <td><code>user1@tipsy.com</code></td>
+    <td><code>password</code></td>
+  </tr>
+</table>
 
-## Code scaffolding
+<hr>
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+<h2>🚀 Development Server</h2>
 
-```bash
-ng generate component component-name
-```
+<p>Start a local development server:</p>
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+<pre><code>ng serve
+</code></pre>
 
-```bash
-ng generate --help
-```
+<p>
+  Then open <strong>http://localhost:4200/</strong> in your browser.<br>
+  The application reloads automatically when you save changes.
+</p>
 
-## Building
+<hr>
 
-To build the project run:
+<h2>🛠 Code Scaffolding</h2>
 
-```bash
-ng build
-```
+<p>Generate a new component:</p>
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+<pre><code>ng generate component component-name
+</code></pre>
 
-## Running unit tests
+<p>View all available schematics:</p>
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+<pre><code>ng generate --help
+</code></pre>
 
-```bash
-ng test
-```
+<hr>
 
-## Running end-to-end tests
+<h2>🏗 Building the Project</h2>
 
-For end-to-end (e2e) testing, run:
+<p>Build the application:</p>
 
-```bash
-ng e2e
-```
+<pre><code>ng build
+</code></pre>
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+<p>
+  The compiled files will appear in the <code>dist/</code> directory.<br>
+  Production builds are optimized automatically.
+</p>
 
-## Additional Resources
+<hr>
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+<h2>🧪 Running Unit Tests</h2>
+
+<p>Run unit tests using Karma:</p>
+
+<pre><code>ng test
+</code></pre>
+
+<hr>
+
+<h2>🌐 Running End-to-End Tests</h2>
+
+<p>Run e2e tests:</p>
+
+<pre><code>ng e2e
+</code></pre>
+
+<p>
+  <strong>Note:</strong> Angular CLI no longer includes a built-in e2e framework.<br>
+  You may configure one such as <em>Cypress</em> or <em>Playwright</em>.
+</p>
+
+<hr>
+
+<h2>📚 Additional Resources</h2>
+
+<p>
+  For more information about Angular CLI commands, visit:<br>
+  👉 <a href="https://angular.dev/tools/cli">Angular CLI Overview and Command Reference</a>
+</p>
