@@ -1,0 +1,67 @@
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-[#23263A] p-8 rounded-lg shadow-xl">
+    <h1 class="text-3xl font-bold text-white mb-6">Submit an Anonymous Report</h1>
+    <p class="text-gray-400 mb-8">
+      Your submission is completely anonymous. Provide as much detail as possible to ensure a thorough investigation. All data is immutably recorded on the blockchain.
+    </p>
+
+    <form (ngSubmit)="submitReport()" class="space-y-6">
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-300 mb-2">Report Title</label>
+        <input type="text" id="title" [(ngModel)]="title" name="title"
+               class="w-full bg-[#1A1C2C] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-[#6C5DD3] focus:outline-none"
+               placeholder="e.g., Financial Misconduct in Q3" required>
+      </div>
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Detailed Description</label>
+        <textarea id="description" [(ngModel)]="description" name="description" rows="10"
+                  class="w-full bg-[#1A1C2C] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-[#6C5DD3] focus:outline-none"
+                  placeholder="Describe the incident in detail. Include dates, times, locations, and any individuals involved without compromising your anonymity."
+                  required></textarea>
+        
+        @if(duplicateCheckResult(); as result) {
+            <div class="mt-3 p-3 rounded-lg text-sm"
+                 [class.bg-yellow-500/20]="result.isDuplicate"
+                 [class.text-yellow-300]="result.isDuplicate"
+                 [class.bg-green-500/20]="!result.isDuplicate"
+                 [class.text-green-300]="!result.isDuplicate">
+                <i class="fas" [class.fa-triangle-exclamation]="result.isDuplicate" [class.fa-check-circle]="!result.isDuplicate"></i>
+                AI Analysis: This report has a {{result.similarityScore}}% similarity to existing reports.
+                @if(result.isDuplicate) {
+                    <span class="font-bold">This may be a duplicate.</span>
+                }
+            </div>
+        } @else if(description().length > 10) {
+           <div class="mt-3 p-3 rounded-lg text-sm bg-blue-500/20 text-blue-300">
+               <i class="fas fa-spinner fa-spin mr-2"></i> AI is checking for duplicates as you type...
+           </div>
+        }
+      </div>
+      <div>
+        <label for="evidence" class="block text-sm font-medium text-gray-300 mb-2">Upload Evidence (Mock)</label>
+        <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-600 border-dashed rounded-md">
+          <div class="space-y-1 text-center">
+            <i class="fas fa-file-arrow-up mx-auto h-12 w-12 text-gray-500"></i>
+            <p class="text-sm text-gray-400">
+              <span class="relative cursor-pointer rounded-md font-medium text-[#6C5DD3] hover:text-[#584bad]">
+                <span>Upload a file</span>
+              </span>
+            </p>
+            <p class="text-xs text-gray-500">Images or documents up to 10MB</p>
+          </div>
+        </div>
+      </div>
+      <div class="pt-4">
+        <button type="submit" [disabled]="!title() || !description() || isSubmitting()"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-[#6C5DD3] hover:bg-[#584bad] disabled:bg-gray-600 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6C5DD3] transition-colors">
+          @if (isSubmitting()) {
+            <span><i class="fas fa-spinner fa-spin mr-2"></i> Submitting to Blockchain...</span>
+          } @else {
+            <span>Submit Anonymously</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

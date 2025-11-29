@@ -1,0 +1,264 @@
+@if (!report()) {
+<div class="container mx-auto">
+  <app-skeleton-loader customClass="h-10 w-3/4 mb-4"></app-skeleton-loader>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-[#23263A] p-6 rounded-lg">
+        <app-skeleton-loader
+          customClass="h-4 w-full mb-2"
+        ></app-skeleton-loader>
+        <app-skeleton-loader customClass="h-4 w-5/6 mb-2"></app-skeleton-loader>
+        <app-skeleton-loader customClass="h-4 w-full"></app-skeleton-loader>
+      </div>
+      <div class="bg-[#23263A] p-6 rounded-lg">
+        <app-skeleton-loader customClass="h-6 w-1/3 mb-4"></app-skeleton-loader>
+        <app-skeleton-loader
+          customClass="h-4 w-full mb-2"
+        ></app-skeleton-loader>
+        <app-skeleton-loader customClass="h-4 w-4/6"></app-skeleton-loader>
+      </div>
+    </div>
+    <div class="space-y-6">
+      <div class="bg-[#23263A] p-6 rounded-lg">
+        <app-skeleton-loader customClass="h-6 w-1/2 mb-4"></app-skeleton-loader>
+        <app-skeleton-loader customClass="h-20 w-full"></app-skeleton-loader>
+      </div>
+    </div>
+  </div>
+</div>
+} @else { @let r = report()!;
+<div class="container mx-auto">
+  <div
+    class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6"
+  >
+    <h1 class="text-2xl lg:text-4xl font-bold text-white">{{ r.title }}</h1>
+    <div class="flex items-center space-x-2 flex-shrink-0">
+      <span
+        class="px-4 py-2 rounded-full text-sm font-semibold"
+        [class]="getStatusClass(r.status)"
+      >
+        Status: {{ r.status }}
+      </span>
+      <button
+        (click)="upvote()"
+        class="bg-gray-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors"
+      >
+        <i class="fas fa-arrow-up mr-2"></i> {{ r.upvotes }}
+      </button>
+      <button
+        (click)="downvote()"
+        class="bg-gray-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors"
+      >
+        <i class="fas fa-arrow-down mr-2"></i> {{ r.downvotes }}
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- AI Summary -->
+      <div class="bg-[#23263A] p-6 rounded-lg shadow-xl border border-gray-700">
+        <h3 class="text-xl font-bold text-white mb-3 flex items-center">
+          <i class="fas fa-brain text-[#6C5DD3] mr-3"></i> AI-Generated Summary
+        </h3>
+        @if (!aiSummary()) {
+        <app-skeleton-loader customClass="h-4 w-full"></app-skeleton-loader>
+        } @else {
+        <p class="text-gray-300">{{ aiSummary()?.summary }}</p>
+        }
+      </div>
+
+      <!-- Full Report Description -->
+      <div class="bg-[#23263A] p-6 rounded-lg shadow-xl">
+        <h3 class="text-xl font-bold text-white mb-3">Full Report Details</h3>
+        <p class="text-gray-400 whitespace-pre-wrap">{{ r.description }}</p>
+        <div
+          class="text-sm text-gray-500 mt-4 pt-4 border-t border-gray-700 flex justify-between"
+        >
+          <span>Submitted by: {{ r.submitter }}</span>
+          <span>On: {{ r.createdAt | date : 'fullDate' }}</span>
+        </div>
+      </div>
+
+      <!-- Evidence Gallery -->
+      <div class="bg-[#23263A] p-6 rounded-lg shadow-xl">
+        <h3 class="text-xl font-bold text-white mb-4">Evidence Gallery</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          @for (item of r.evidence; track item.id) {
+          <div class="relative overflow-hidden rounded-lg group">
+            <img
+              [src]="item.url"
+              [alt]="item.filename"
+              class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300"
+            />
+            <div
+              class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <span class="text-white text-sm">{{ item.filename }}</span>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-8">
+      <!-- AI Analysis Panel -->
+      <div class="bg-[#23263A] p-6 rounded-lg shadow-xl border border-gray-700">
+        <h3 class="text-xl font-bold text-white mb-4">AI Analysis</h3>
+        <div class="space-y-4">
+          <div class="flex flex-col items-center p-3 rounded-lg bg-[#1A1C2C]">
+            <span class="text-sm text-gray-400 mb-1"
+              >AI-Predicted Criticality</span
+            >
+            @if (!aiSeverity()) {
+            <app-skeleton-loader customClass="h-8 w-24"></app-skeleton-loader>
+            } @else {
+            <span
+              class="px-4 py-1.5 rounded-md font-bold text-lg glow-tag"
+              [class]="getSeverityClass(r.criticality)"
+            >
+              {{ r.criticality }}
+            </span>
+            }
+          </div>
+          <div class="flex flex-col items-center p-3 rounded-lg bg-[#1A1C2C]">
+            <span class="text-sm text-gray-400 mb-1"
+              >Evidence Integrity Score</span
+            >
+            @if (!aiEvidenceIntegrity()) {
+            <app-skeleton-loader customClass="h-8 w-16"></app-skeleton-loader>
+            } @else {
+            <span class="text-2xl font-bold text-[#6C5DD3]"
+              >{{ aiEvidenceIntegrity()?.integrityScore }}/100</span
+            >
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Blockchain History -->
+      <div class="bg-[#23263A] p-6 rounded-lg shadow-xl">
+        <h3 class="text-xl font-bold text-white mb-4">Blockchain History</h3>
+        <div class="space-y-3 max-h-80 overflow-y-auto pr-2">
+          @for(block of reportBlockchain(); track block.id){
+          <div class="bg-[#1A1C2C] p-2 rounded text-xs font-mono">
+            <p class="text-green-400 truncate" [title]="block.hash">
+              Hash: {{ block.hash }}
+            </p>
+            <p class="text-gray-500 text-[10px]">
+              {{ block.timestamp | date : 'short' }}
+            </p>
+          </div>
+          }
+        </div>
+        <a
+          routerLink="/blockchain-explorer"
+          class="text-sm text-[#6C5DD3] hover:underline mt-4 block text-center"
+          >View Full Chain</a
+        >
+      </div>
+
+      <!-- Comments -->
+      <div class="bg-[#23263A] p-6 rounded-lg shadow-xl">
+        <h3 class="text-xl font-bold text-white mb-4">
+          Anonymous Comments ({{ r.comments.length }})
+        </h3>
+        <div class="space-y-4 max-h-80 overflow-y-auto mb-4 pr-2">
+          @for (comment of r.comments; track comment.id) {
+          <div class="bg-[#1A1C2C] p-3 rounded-lg">
+            <p class="text-gray-300 text-sm">{{ comment.text }}</p>
+            <div class="text-xs text-gray-500 mt-2 flex justify-between">
+              <span>{{ comment.author }}</span>
+              <span>{{ comment.createdAt | date : 'short' }}</span>
+            </div>
+          </div>
+          }
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-700">
+          <textarea
+            [(ngModel)]="newComment"
+            class="w-full bg-[#1A1C2C] border border-gray-600 rounded-lg p-2 text-white focus:ring-2 focus:ring-[#6C5DD3] focus:outline-none"
+            rows="3"
+            placeholder="Add an anonymous comment..."
+          ></textarea>
+          <button
+            (click)="submitComment()"
+            class="w-full mt-2 bg-[#6C5DD3] hover:bg-[#584bad] text-white font-bold py-2 rounded-lg transition-colors"
+          >
+            Submit Comment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Anonymous Chat Window -->
+@if (isSubmitter()) {
+<button
+  (click)="toggleChat()"
+  class="fixed bottom-6 right-6 bg-[#6C5DD3] text-white rounded-full h-16 w-16 flex items-center justify-center shadow-lg hover:bg-[#584bad] transition-transform transform hover:scale-110 z-50"
+>
+  <i class="fas fa-comments text-2xl"></i>
+</button>
+} @if (isChatOpen()) {
+<div
+  class="fixed bottom-24 right-6 w-96 h-[500px] bg-[#23263A] rounded-lg shadow-2xl flex flex-col border border-gray-700 z-50"
+>
+  <header
+    class="bg-[#1A1C2C] p-4 flex justify-between items-center rounded-t-lg"
+  >
+    <h3 class="text-lg font-bold text-white">Chat with Admin</h3>
+    <button (click)="toggleChat()" class="text-gray-400 hover:text-white">
+      &times;
+    </button>
+  </header>
+  <main class="flex-1 p-4 space-y-4 overflow-y-auto">
+    @if(chatSession(); as session) { @for(message of session.messages; track
+    message.id) {
+    <div
+      class="flex"
+      [class.justify-end]="message.senderId === currentUser()?.anonymousId"
+      [class.justify-start]="message.senderId !== currentUser()?.anonymousId"
+    >
+      <div
+        class="max-w-xs p-3 rounded-lg"
+        [class.bg-[#6C5DD3]]="message.senderId === currentUser()?.anonymousId"
+        [class.text-white]="message.senderId === currentUser()?.anonymousId"
+        [class.bg-[#1A1C2C]]="message.senderId !== currentUser()?.anonymousId"
+        [class.text-gray-300]="message.senderId !== currentUser()?.anonymousId"
+      >
+        <p class="text-sm">{{ message.text }}</p>
+        <p class="text-xs opacity-60 mt-1 text-right">
+          {{ message.timestamp | date : 'shortTime' }}
+        </p>
+      </div>
+    </div>
+    } @empty {
+    <p class="text-center text-sm text-gray-500">
+      Send a message to start the conversation.
+    </p>
+    } }
+  </main>
+  <footer class="p-4 bg-[#1A1C2C] rounded-b-lg">
+    <div class="flex space-x-2">
+      <input
+        type="text"
+        [(ngModel)]="newChatMessage"
+        (keyup.enter)="sendChatMessage()"
+        placeholder="Type your message..."
+        class="flex-1 bg-[#23263A] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#6C5DD3]"
+      />
+      <button
+        (click)="sendChatMessage()"
+        class="bg-[#6C5DD3] hover:bg-[#584bad] text-white font-bold px-4 rounded-lg transition-colors"
+      >
+        Send
+      </button>
+    </div>
+  </footer>
+</div>
+} }

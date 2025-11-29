@@ -1,0 +1,108 @@
+<div class="container mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-white">Tip Dashboard</h1>
+    <a
+      routerLink="/create-report"
+      class="bg-[#6C5DD3] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-[#584bad] transition-colors flex items-center"
+    >
+      <i class="fas fa-plus mr-2"></i> New Anonymous Tip
+    </a>
+  </div>
+
+  <div
+    class="bg-[#23263A] p-4 rounded-lg mb-6 flex flex-wrap gap-4 items-center"
+  >
+    <div class="flex items-center space-x-2">
+      <label class="text-sm font-medium text-gray-300">Status:</label>
+      <div class="flex space-x-2">
+        @for(status of statuses; track status) {
+        <button
+          (click)="setStatusFilter(status)"
+          [class.bg-[#6C5DD3]]="statusFilter() === status"
+          [class.bg-gray-700]="statusFilter() !== status"
+          class="px-3 py-1 text-sm text-white rounded-md hover:bg-[#584bad] transition-colors"
+        >
+          {{ status }}
+        </button>
+        }
+      </div>
+    </div>
+    <div class="flex items-center space-x-2">
+      <label class="text-sm font-medium text-gray-300">Criticality:</label>
+      <div class="flex space-x-2">
+        @for(crit of criticalities; track crit) {
+        <button
+          (click)="setCriticalityFilter(crit)"
+          [class.bg-[#6C5DD3]]="criticalityFilter() === crit"
+          [class.bg-gray-700]="criticalityFilter() !== crit"
+          class="px-3 py-1 text-sm text-white rounded-md hover:bg-[#584bad] transition-colors"
+        >
+          {{ crit }}
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (!reports()) {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (_ of [1,2,3,4,5,6]; track _) {
+    <div class="bg-[#23263A] p-5 rounded-lg shadow-lg">
+      <app-skeleton-loader customClass="h-6 w-3/4 mb-4"></app-skeleton-loader>
+      <app-skeleton-loader customClass="h-4 w-full mb-2"></app-skeleton-loader>
+      <app-skeleton-loader customClass="h-4 w-5/6 mb-4"></app-skeleton-loader>
+      <div class="flex justify-between items-center">
+        <app-skeleton-loader customClass="h-8 w-24"></app-skeleton-loader>
+        <app-skeleton-loader customClass="h-8 w-24"></app-skeleton-loader>
+      </div>
+    </div>
+    }
+  </div>
+  } @else { @if(filteredReports().length > 0) {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (report of filteredReports(); track report.id) {
+    <div
+      [routerLink]="['/report', report.id]"
+      class="bg-[#23263A] p-5 rounded-lg shadow-lg hover:shadow-2xl hover:border-[#6C5DD3] border-2 border-transparent cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
+    >
+      <h2
+        class="text-xl font-bold text-white truncate mb-2"
+        [title]="report.title"
+      >
+        {{ report.title }}
+      </h2>
+      <p class="text-gray-400 h-12 overflow-hidden text-ellipsis mb-4">
+        {{ report.description }}
+      </p>
+      <div class="flex justify-between items-center text-sm mb-4">
+        <span class="text-gray-500">{{
+          report.createdAt | date : 'medium'
+        }}</span>
+        <span class="flex items-center text-gray-300"
+          ><i class="fas fa-arrow-up mr-1"></i> {{ report.upvotes }}</span
+        >
+      </div>
+      <div class="flex justify-between items-center">
+        <span
+          class="px-3 py-1 rounded-full text-xs font-semibold border"
+          [class]="getSeverityClass(report.criticality)"
+        >
+          <i class="fas fa-triangle-exclamation mr-1"></i
+          >{{ report.criticality }}
+        </span>
+        <span
+          class="px-3 py-1 rounded-full text-xs font-semibold border"
+          [class]="getStatusClass(report.status)"
+        >
+          {{ report.status }}
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="text-center py-16 bg-[#23263A] rounded-lg">
+    <p class="text-gray-400 text-lg">No tip match the current filters.</p>
+  </div>
+  } }
+</div>

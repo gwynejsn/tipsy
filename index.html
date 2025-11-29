@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TIPSY - Transparency & Integrity Protection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      body {
+        background-color: #1a1c2c;
+        color: #e0e0e0;
+        font-family: 'Inter', sans-serif;
+      }
+      @keyframes glow {
+        0%,
+        100% {
+          box-shadow: 0 0 2px #6c5dd3, 0 0 5px #6c5dd3, 0 0 10px #6c5dd3;
+        }
+        50% {
+          box-shadow: 0 0 5px #8a7eff, 0 0 10px #8a7eff, 0 0 15px #8a7eff;
+        }
+      }
+      .glow-tag {
+        animation: glow 2s ease-in-out infinite;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+      .shimmer {
+        animation: shimmer 2s infinite linear;
+        background: linear-gradient(
+          to right,
+          #23263a 8%,
+          #2a2d42 18%,
+          #23263a 33%
+        );
+        background-size: 2000px 100%;
+      }
+      .chain-link::after {
+        content: '→';
+        position: absolute;
+        right: -24px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: #6c5dd3;
+        opacity: 0.5;
+      }
+      .chain-block:last-child .chain-link::after {
+        display: none;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "rxjs": "https://aistudiocdn.com/rxjs@^7.8.2?conditions=es2015",
+          "rxjs/operators": "https://aistudiocdn.com/rxjs@^7.8.2/operators?conditions=es2015",
+          "rxjs/ajax": "https://aistudiocdn.com/rxjs@^7.8.2/ajax?conditions=es2015",
+          "rxjs/webSocket": "https://aistudiocdn.com/rxjs@^7.8.2/webSocket?conditions=es2015",
+          "rxjs/testing": "https://aistudiocdn.com/rxjs@^7.8.2/testing?conditions=es2015",
+          "rxjs/fetch": "https://aistudiocdn.com/rxjs@^7.8.2/fetch?conditions=es2015",
+          "@angular/compiler": "https://next.esm.sh/@angular/compiler@^21.0.1?external=rxjs",
+          "@angular/platform-browser": "https://next.esm.sh/@angular/platform-browser@^21.0.1?external=rxjs",
+          "@angular/router": "https://next.esm.sh/@angular/router@^21.0.1?external=rxjs",
+          "@angular/common/http": "https://next.esm.sh/@angular/common@^21.0.1/http?external=rxjs",
+          "@angular/core": "https://next.esm.sh/@angular/core@^21.0.1?external=rxjs",
+          "@angular/common": "https://next.esm.sh/@angular/common@^21.0.1?external=rxjs",
+          "@angular/core/rxjs-interop": "https://next.esm.sh/@angular/core@^21.0.1/rxjs-interop?external=rxjs",
+          "@angular/forms": "https://next.esm.sh/@angular/forms@^21.0.1?external=rxjs",
+          "crypto-js": "https://next.esm.sh/crypto-js@^4.2.0?external=rxjs",
+          "chart.js/auto": "https://next.esm.sh/chart.js@^4.5.1/auto?external=rxjs"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body class="antialiased">
+    <app-root></app-root>
+  </body>
+</html>
