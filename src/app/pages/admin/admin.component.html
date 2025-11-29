@@ -1,0 +1,247 @@
+<div class="container mx-auto">
+  <h1 class="text-3xl font-bold text-white mb-6">Admin Review Panel</h1>
+
+  <!-- Dashboard Analytics -->
+  <div class="mb-8 bg-[#23263A] p-6 rounded-lg shadow-xl">
+    <h2 class="text-2xl font-bold text-white mb-4">Dashboard Analytics</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h3 class="text-lg font-semibold text-center text-gray-300 mb-2">
+          Reports by Status
+        </h3>
+        <div class="max-w-xs mx-auto">
+          <canvas #statusChart></canvas>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-center text-gray-300 mb-2">
+          Reports by Criticality
+        </h3>
+        <canvas #criticalityChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Report List -->
+    <div class="lg:col-span-1 bg-[#23263A] p-4 rounded-lg shadow-xl h-fit">
+      <div class="border-b border-gray-700 mb-4">
+        <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+          <button
+            (click)="activeTab.set('Open')"
+            [class.border-[#6C5DD3]]="activeTab() === 'Open'"
+            [class.text-[#6C5DD3]]="activeTab() === 'Open'"
+            class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          >
+            Open
+          </button>
+          <button
+            (click)="activeTab.set('Under Review')"
+            [class.border-[#6C5DD3]]="activeTab() === 'Under Review'"
+            [class.text-[#6C5DD3]]="activeTab() === 'Under Review'"
+            class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          >
+            Under Review
+          </button>
+          <button
+            (click)="activeTab.set('Resolved')"
+            [class.border-[#6C5DD3]]="activeTab() === 'Resolved'"
+            [class.text-[#6C5DD3]]="activeTab() === 'Resolved'"
+            class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          >
+            Resolved
+          </button>
+        </nav>
+      </div>
+
+      <div class="space-y-3 max-h-[70vh] overflow-y-auto">
+        @if (!reports()) { @for (_ of [1,2,3]; track _) {
+        <div class="p-3 rounded-lg bg-[#1A1C2C]">
+          <app-skeleton-loader
+            customClass="h-5 w-3/4 mb-2"
+          ></app-skeleton-loader>
+          <app-skeleton-loader customClass="h-4 w-1/2"></app-skeleton-loader>
+        </div>
+        } } @else { @for (report of filteredReports(); track report.id) {
+        <div
+          (click)="selectReport(report)"
+          [class.bg-[#6C5DD3]]="selectedReport()?.id === report.id"
+          [class.text-white]="selectedReport()?.id === report.id"
+          class="p-3 rounded-lg bg-[#1A1C2C] hover:bg-gray-700 cursor-pointer transition-colors"
+        >
+          <h4 class="font-bold truncate">{{ report.title }}</h4>
+          <p
+            class="text-sm"
+            [class.text-gray-400]="selectedReport()?.id !== report.id"
+          >
+            Submitted: {{ report.createdAt | date : "short" }}
+          </p>
+        </div>
+        } @empty {
+        <p class="text-center text-gray-500 py-8">
+          No reports in this category.
+        </p>
+        } }
+      </div>
+    </div>
+
+    <!-- Report Details -->
+    <div class="lg:col-span-2 bg-[#23263A] p-6 rounded-lg shadow-xl">
+      @if (selectedReport(); as report) {
+      <div>
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-white mb-1">
+              {{ report.title }}
+            </h2>
+            <div class="flex items-center space-x-4 text-sm">
+              <span
+                class="px-3 py-1 rounded-full text-xs font-semibold border"
+                [class]="getSeverityClass(report.criticality)"
+              >
+                {{ report.criticality }} Criticality
+              </span>
+              @if(submitter(); as sub) {
+              <div class="text-gray-400">
+                Submitter:
+                <span class="font-bold text-gray-300">{{
+                  sub.anonymousId
+                }}</span>
+                | Reputation:
+                <span class="font-bold text-[#6C5DD3]">{{
+                  sub.reputation
+                }}</span>
+              </div>
+              }
+            </div>
+          </div>
+          <div class="flex space-x-2 flex-shrink-0">
+            @switch (report.status) { @case ('Open') {
+            <button
+              (click)="changeStatus(report, 'Under Review')"
+              class="bg-yellow-500/20 hover:bg-yellow-500/40 text-yellow-300 px-3 py-1 rounded-md text-sm transition-colors"
+            >
+              Mark as Under Review
+            </button>
+            } @case ('Under Review') {
+            <button
+              (click)="changeStatus(report, 'Resolved')"
+              class="bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 px-3 py-1 rounded-md text-sm transition-colors"
+            >
+              Mark as Resolved
+            </button>
+            } @case ('Resolved') {
+            <button
+              (click)="changeStatus(report, 'Open')"
+              class="bg-gray-500/20 hover:bg-gray-500/40 text-gray-300 px-3 py-1 rounded-md text-sm transition-colors"
+            >
+              Re-open Report
+            </button>
+            } }
+          </div>
+        </div>
+        <p
+          class="text-gray-400 my-4 h-24 overflow-y-auto pr-2 bg-[#1A1C2C] p-3 rounded-md"
+        >
+          {{ report.description }}
+        </p>
+
+        <!-- Anonymous Chat Panel -->
+        @if(selectedChatSession(); as session) { @if(session.messages.length >
+        0) {
+        <div class="bg-[#1A1C2C] border border-gray-700 p-4 rounded-lg mt-6">
+          <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+            <i class="fas fa-comments text-gray-400 mr-2"></i>Anonymous Chat
+          </h3>
+          <div class="h-40 overflow-y-auto space-y-3 p-2">
+            @for(message of session.messages; track message.id) {
+            <div
+              class="flex"
+              [class.justify-end]="message.senderId === 'Admin'"
+              [class.justify-start]="message.senderId !== 'Admin'"
+            >
+              <div
+                class="max-w-xs p-3 rounded-lg"
+                [class.bg-[#6C5DD3]]="message.senderId === 'Admin'"
+                [class.text-white]="message.senderId === 'Admin'"
+                [class.bg-[#23263A]]="message.senderId !== 'Admin'"
+                [class.text-gray-300]="message.senderId !== 'Admin'"
+              >
+                <p class="text-sm">{{ message.text }}</p>
+                <p class="text-xs opacity-60 mt-1 text-right">
+                  {{ message.timestamp | date : "shortTime" }}
+                </p>
+              </div>
+            </div>
+            }
+          </div>
+          <div class="flex space-x-2 mt-3">
+            <input
+              type="text"
+              [(ngModel)]="adminNewMessage"
+              (keyup.enter)="sendAdminReply()"
+              placeholder="Reply anonymously..."
+              class="flex-1 bg-[#23263A] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#6C5DD3]"
+            />
+            <button
+              (click)="sendAdminReply()"
+              class="bg-[#6C5DD3] hover:bg-[#584bad] text-white font-bold px-4 rounded-lg transition-colors"
+            >
+              Reply
+            </button>
+          </div>
+        </div>
+        } }
+
+        <!-- AI Recommendation Panel -->
+        <div
+          class="bg-[#1A1C2C] border border-[#6C5DD3]/50 p-4 rounded-lg mt-6"
+        >
+          <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+            <i class="fas fa-lightbulb text-[#6C5DD3] mr-2"></i>AI Recommended
+            Action
+          </h3>
+
+          <!-- Loading state -->
+          <ng-container
+            *ngIf="isRecommendationLoading(); else showRecommendation"
+          >
+            <app-skeleton-loader
+              customClass="h-6 w-3/4 mb-2"
+            ></app-skeleton-loader>
+            <app-skeleton-loader customClass="h-4 w-full"></app-skeleton-loader>
+          </ng-container>
+
+          <!-- Recommendation state -->
+          <ng-template #showRecommendation>
+            <ng-container *ngIf="aiRecommendation() as rec">
+              <div>
+                <p class="text-xl font-bold text-[#6C5DD3]">{{ rec.action }}</p>
+                <p class="text-sm text-gray-400 mt-2">
+                  <span class="font-semibold text-gray-300">Reasoning:</span>
+                  {{ rec.reasoning }}
+                </p>
+              </div>
+            </ng-container>
+
+            <!-- Optional: fallback if no recommendation -->
+            <ng-container *ngIf="!aiRecommendation()">
+              <p class="text-gray-400">No recommendation available.</p>
+            </ng-container>
+          </ng-template>
+        </div>
+      </div>
+      } @else {
+      <div class="flex flex-col items-center justify-center h-full text-center">
+        <i class="fas fa-folder-open text-6xl text-gray-600 mb-4"></i>
+        <h3 class="text-xl font-bold text-white">
+          Select a report to view details
+        </h3>
+        <p class="text-gray-500">
+          Details and AI recommendations will appear here.
+        </p>
+      </div>
+      }
+    </div>
+  </div>
+</div>
